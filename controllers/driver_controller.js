@@ -7,15 +7,22 @@ exports.createDriver = (req, res, next) => {
             res.status(200);
             res.send(driver);
         })
-        .catch(() => next)
+        .catch(() => next);
 }
 
 //localhost:3000/api/driver?lat=100&lng=101
 exports.readDriver = (req, res, next) => {
-    // console.log("Lat: " + parseFloat(req.query.lat))
-    // console.log("Long: " + req.query.lng)
-    // res.status(200)
-    // next
+    const { lng, lat } = req.query;
+    Driver.find({
+        location: {
+            $geoWithin: {
+                $center: [[parseFloat(lng), parseFloat(lat)], 50 ]
+            },
+            // $limit: 0
+        }
+    })
+    .then(drivers => res.send(drivers))
+    .catch(next);
 }
 
 exports.updateDriver = (req, res, next) => {
@@ -28,7 +35,7 @@ exports.updateDriver = (req, res, next) => {
             res.status(200);
             res.send(driver);
         })
-        .catch(() => next)
+        .catch(() => next);
 }
 
 exports.deleteDriver = (req, res, next) => {
@@ -38,5 +45,5 @@ exports.deleteDriver = (req, res, next) => {
         res.status(200);
         res.send("Driver successfully removed");
     })
-    .catch(() => next)
+    .catch(() => next);
 }
